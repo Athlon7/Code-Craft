@@ -240,21 +240,18 @@ void search_route(char *topo[5000], int edge_num, char *demand)
 	max = creat_chain(head, ptr, topo, edge_num);
 	DFS(head, 0, target[0], target, visited, path, &cost);
 
-	if (cost == 100000)
-		printf("NA\n");
-	else
+	
+	if (cost < 100000)
 	{
-		printf("cost:%d path:", cost);
 		while (path[i] != -1)
 		{
-			printf("%d, ", path[i]);
+			record_result(path[i]);
 			i++;
-		}
-		printf("\n");
+		}		
 	}
 	
 
-    // unsigned short result[] = {2, 6, 3};//示例中的一个解
+    // unsigned short result[] = {2, 6, 3};//脢戮脌媒脰脨碌脛脪禄赂枚陆芒
 
     // for (int i = 0; i < 3; i++)
     //     record_result(result[i]);
