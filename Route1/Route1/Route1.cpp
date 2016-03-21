@@ -172,7 +172,7 @@ void print_chain(Node **head, int max)
 	}
 }
 
-void DFS(Node **head, int pre_weight, int start, int *target, int *visited, int result_path[1000][100], int *result_cost)
+void DFS(Node **head, int pre_weight, int start, int *target, int *visited, int *result_path, int *result_cost)
 {
 	Node *ptr;
 	int i, flag = 1;
@@ -196,12 +196,12 @@ void DFS(Node **head, int pre_weight, int start, int *target, int *visited, int 
 			}				
 			i++;
 		}
-		if (flag)
+		if (flag && (cost < *result_cost))
 		{
 			for (i = 0;i < count;i++)
-				result_path[path_count][i] = path_stack[i];
-			result_path[path_count][i] = -1;
-			result_cost[path_count] = cost;
+				result_path[i] = path_stack[i];
+			result_path[i] = -1;
+			*result_cost = cost;
 			path_count++;
 			//for (i = 0; i < 45; i++)
 			//	if (visited[i] == 1)
@@ -230,29 +230,29 @@ void search_route(char *topo[5000], int edge_num, char *demand)
 {
     Node *head[600], *ptr[600];
 	int target[52], visited[600], max;
-	int path[1000][100] = {0};
-	int cost[1000] = {0};
+	int path[100] = {0};
+	int cost = 100000;
 
-	int i = 0, j = 0;
+	int i = 0;
 
 	initfunc(head, ptr, target, visited);	
 	demand2num(demand, target);
 	max = creat_chain(head, ptr, topo, edge_num);
-	DFS(head, 0, target[0], target, visited, path, cost);
+	DFS(head, 0, target[0], target, visited, path, &cost);
 
-	while (cost[i] != 0)
+	if (cost == 100000)
+		printf("NA\n");
+	else
 	{
-		printf("cost:%d path:", cost[i]);
-		while (path[i][j] != -1)
+		printf("cost:%d path:", cost);
+		while (path[i] != -1)
 		{
-			printf("%d, ", path[i][j]);
-			j++;
+			printf("%d, ", path[i]);
+			i++;
 		}
 		printf("\n");
-		j = 0;
-		i++;
 	}
-
+	
 
     // unsigned short result[] = {2, 6, 3};//示例中的一个解
 
