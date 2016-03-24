@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #define LEN sizeof(struct chain_node)
 #define MAX_LINE_LEN 4000
@@ -266,13 +267,19 @@ int main()
 	char *topo[5000];	
 	char *demand;
 	int demand_num;
+	clock_t start, finish;
 
+	start = clock();
 	edge_num = read_file(topo, 5000, "topo.csv");
 	demand_num = read_file(&demand, 1, "demand.csv");
 	// for (i = 0;i < edge_num;i++)
 	// 	printf("%s", topo[i]);
 	//print_chain(head, max);
 	search_route(topo, edge_num, demand);
+	finish = clock();
+
+	printf("%f ms used", (double)(finish - start));
+	getchar();
 
 	return 0;
 }
