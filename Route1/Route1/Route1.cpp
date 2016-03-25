@@ -110,6 +110,8 @@ int creat_chain(Node **head, Node **ptr, char *topo[5000], int edge_num)
 		topo2num(topo[i], num);
 		if(num[1] > max)
 			max = num[1];
+		if (num[2] > max)
+			max = num[2];
 		if (visited[num[1]] == 0)
 		{
 			head[num[1]] = (Node *)malloc(LEN);
@@ -211,7 +213,7 @@ void DFS(Node **head, int pre_weight, int start, int *target, int *visited, int 
 		}
 		
 	}
-	else
+	else if (cost < *result_cost)
 		while (ptr->next != NULL)
 		{
 			ptr = ptr->next;
@@ -239,6 +241,7 @@ void search_route(char *topo[5000], int edge_num, char *demand)
 	initfunc(head, ptr, target, visited);	
 	demand2num(demand, target);
 	max = creat_chain(head, ptr, topo, edge_num);
+	//print_chain(head, max);
 	DFS(head, 0, target[0], target, visited, path, &cost);
 
 	if (cost == 100000)
@@ -255,7 +258,7 @@ void search_route(char *topo[5000], int edge_num, char *demand)
 	}
 	
 
-    // unsigned short result[] = {2, 6, 3};//示例中的一个解
+    // unsigned short result[] = {2, 6, 3};//脢戮脌媒脰脨碌脛脪禄赂枚陆芒
 
     // for (int i = 0; i < 3; i++)
     //     record_result(result[i]);
@@ -272,9 +275,8 @@ int main()
 	start = clock();
 	edge_num = read_file(topo, 5000, "topo.csv");
 	demand_num = read_file(&demand, 1, "demand.csv");
-	// for (i = 0;i < edge_num;i++)
-	// 	printf("%s", topo[i]);
-	//print_chain(head, max);
+	 //for (i = 0;i < edge_num;i++)
+	 //	printf("%s", topo[i]);	
 	search_route(topo, edge_num, demand);
 	finish = clock();
 
