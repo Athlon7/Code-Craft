@@ -191,7 +191,7 @@ void print_chain(Node **head, int max)
 	}
 }
 
-int Dijkstra(Maps graph, int S, int T, int *path)
+int Dijkstra(Maps graph, int *visited, int S, int T, int *path)
 {
 	int i, j, min, k, temp;
 	int D[MAX_VEX], final[MAX_VEX], temp_path[MAX_VEX], reverse_path[MAX_VEX];
@@ -202,10 +202,17 @@ int Dijkstra(Maps graph, int S, int T, int *path)
 	memset(reverse_path, -1, sizeof(int) * MAX_VEX);
 	memset(D, INFI, sizeof(int) * MAX_VEX);
 	memset(final, 0, sizeof(int) * MAX_VEX);
-	for (i = 0;i < graph.max + 1;i++)
+	for (i = 0; i < graph.max + 1; i++)
+	{
 		D[i] = graph.weight[S][i];
+		if (D[i] < INFI)
+			temp_path[i] = S;
+	}
 	D[S] = 0;
 	final[S] = 1;
+	for (i = 0; i < MAX_VEX; i++)
+		if (visited[i] == 1)
+			final[i] = 1;
 
 	//main loop
 	for (i = 0;i < graph.max + 1;i++)
@@ -228,9 +235,11 @@ int Dijkstra(Maps graph, int S, int T, int *path)
 				temp_path[j] = k;
 			}
 		}
+
 		if (final[T] == 1)
 			break;
 	}
+
 	if (final[T] != 1)
 		return INFI;
 
@@ -246,7 +255,7 @@ int Dijkstra(Maps graph, int S, int T, int *path)
 		temp = temp_path[temp];
 		i++;
 	}
-	temp = i;
+	temp = i - 1;
 	for (j = 0;j < i;j++)
 	{
 		path[j] = reverse_path[temp];
@@ -303,9 +312,19 @@ void DFS(Node **head, Maps graph, int pre_weight, int start, int *target, int *v
 		{
 			ptr = ptr->next;
 			if (visited[ptr->point] == 0)
-				if (temp = Dijkstra(graph, start, ptr->point, path) < INFI)
+				if (temp = Dijkstra(graph, visited, start, ptr->point, path) < INFI)
 				{
 					DPath[start][ptr->point].weight = temp;
+					i = 0;
+					while (path[i] != -1)
+					{
+						DPath[start][ptr->point].path[i] = path[i];
+						i++;
+					}
+					DPath[start][ptr->point].path[i] = path[i];
+					count++;
+					cost += temp;
+					DFS(head, graph, temp, ptr->point, target, visited, result_path, result_cost);
 				}
 		}
 	count--;
@@ -330,7 +349,7 @@ void search_route(char *topo[5000], int edge_num, char *demand)
 	creat_chain(head, target, nodes);
 	print_chain(head, nodes);
 	//DFS(head, graph, 0, target[0], target, visited, path, &cost);
-	test_weight = Dijkstra(graph, 0, 1, test_path);
+	test_weight = Dijkstra(graph, visited, 2, 8, test_path);
 
 	if (cost == 100000)
 		printf("NA\n");
