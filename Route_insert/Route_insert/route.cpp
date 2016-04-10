@@ -26,7 +26,7 @@ typedef struct chain_node
 
 void initfunc(char **topo, int edge_num, Maps *graph)
 {
-	int maxvex;
+	int maxvex = 0;
 	int i, route, start, end, weight;
 
 	memset(graph->weight, -1, sizeof(int) * MAX_VEX * MAX_VEX);
@@ -43,6 +43,24 @@ void initfunc(char **topo, int edge_num, Maps *graph)
 			else maxvex = end;
 		graph->weight[start][end] = weight;
 		graph->route[start][end] = route;		
+	}
+	graph->max = maxvex;
+
+	/***********test part***********/
+	printf("\n");
+	for (i = 0;i < maxvex + 1;i++)
+	{
+		for (int j = 0;j < maxvex + 1;j++)
+			printf("%d ", graph->route[i][j]);
+		printf("\n");		
+	}
+	
+	printf("\n");
+	for (i = 0;i < maxvex + 1;i++)
+	{
+		for (int j = 0;j < maxvex + 1;j++)
+			printf("%d ", graph->weight[i][j]);
+		printf("\n");		
 	}
 };
 
@@ -105,13 +123,15 @@ int main()
 	char *demand;
 	int demand_num;
 	clock_t start, finish;
+	Maps graph;
 
 	start = clock();
 	edge_num = read_file(topo, 5000, "topo.csv");
 	demand_num = read_file(&demand, 1, "demand.csv");
+	initfunc(topo, edge_num, &graph);
 	 //for (i = 0;i < edge_num;i++)
 	 //	printf("%s", topo[i]);	
-	search_route(topo, edge_num, demand);
+	//search_route(topo, edge_num, demand);
 	finish = clock();
 
 	printf("%f ms used", (double)(finish - start));

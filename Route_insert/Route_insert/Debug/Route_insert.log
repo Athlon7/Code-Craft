@@ -1,0 +1,24 @@
+﻿生成启动时间为 2016/4/7 17:25:27。
+     1>项目“F:\Code Craft\Route_insert\Route_insert\Route_insert.vcxproj”在节点 2 上(Build 个目标)。
+     1>ClCompile:
+         E:\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\" /Fd"Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt route.cpp
+         route.cpp
+     1>f:\code craft\route_insert\route_insert\route.cpp(39): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+         c:\program files (x86)\windows kits\10\include\10.0.10150.0\ucrt\stdio.h(2254): note: 参见“sscanf”的声明
+     1>f:\code craft\route_insert\route_insert\route.cpp(69): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+         c:\program files (x86)\windows kits\10\include\10.0.10150.0\ucrt\stdio.h(205): note: 参见“fopen”的声明
+     1>f:\code craft\route_insert\route_insert\route.cpp(85): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+         c:\program files (x86)\windows kits\10\include\10.0.10150.0\ucrt\string.h(346): note: 参见“strncpy”的声明
+     1>f:\code craft\route_insert\route_insert\route.cpp(100): warning C4996: 'strtok': This function or variable may be unsafe. Consider using strtok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+         c:\program files (x86)\windows kits\10\include\10.0.10150.0\ucrt\string.h(453): note: 参见“strtok”的声明
+     1>f:\code craft\route_insert\route_insert\route.cpp(109): warning C4996: 'strtok': This function or variable may be unsafe. Consider using strtok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+         c:\program files (x86)\windows kits\10\include\10.0.10150.0\ucrt\string.h(453): note: 参见“strtok”的声明
+     1>f:\code craft\route_insert\route_insert\route.cpp(121): warning C4101: “i”: 未引用的局部变量
+       Link:
+         E:\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"F:\Code Craft\Route_insert\Debug\Route_insert.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"F:\Code Craft\Route_insert\Debug\Route_insert.pdb" /SUBSYSTEM:CONSOLE /STACK:"10485760" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:\Code Craft\Route_insert\Debug\Route_insert.lib" /MACHINE:X86 Debug\route.obj
+         Route_insert.vcxproj -> F:\Code Craft\Route_insert\Debug\Route_insert.exe
+     1>已完成生成项目“F:\Code Craft\Route_insert\Route_insert\Route_insert.vcxproj”(Build 个目标)的操作。
+
+已成功生成。
+
+已用时间 00:00:00.48
