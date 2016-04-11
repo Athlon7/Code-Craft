@@ -8,6 +8,7 @@
 #define MAX_VEX 600
 #define INFI 10000
 
+
 typedef struct chain_node
 {
 	int point;	
@@ -26,7 +27,11 @@ typedef struct _Dijsktra_path
 {
 	int path[MAX_VEX];
 	int weight;
+	int flag;
 }Dij_Path;
+
+clock_t begin_t, finish_t;
+Dij_Path DPath[MAX_VEX][MAX_VEX];
 
 int topo2num(char *line, int *num)
 {
@@ -98,6 +103,9 @@ int initfunc(Node **head, int *target, char **topo, int edge_num, Maps *graph)
 
 	for (i = 0;i < MAX_VEX;i++)
 		head[i] = NULL;
+
+	//init Dij
+	memset(DPath, -1, sizeof(_Dijsktra_path) * MAX_VEX * MAX_VEX);
 
 	return 0;
 }
@@ -191,10 +199,11 @@ void print_chain(Node **head, int max)
 	}
 }
 
-int Dijkstra(Maps graph, int *visited, int S, int T, int *path)
+int Dijkstra(Maps *graph, int *target, int S, int T, int *path)
 {
 	int i, j, min, k, temp;
 	int D[MAX_VEX], final[MAX_VEX], temp_path[MAX_VEX], reverse_path[MAX_VEX];
+	//int lenth = 40;
 
 	//init
 	memset(path, -1, sizeof(int) * MAX_VEX);
@@ -202,23 +211,31 @@ int Dijkstra(Maps graph, int *visited, int S, int T, int *path)
 	memset(reverse_path, -1, sizeof(int) * MAX_VEX);
 	memset(D, INFI, sizeof(int) * MAX_VEX);
 	memset(final, 0, sizeof(int) * MAX_VEX);
-	for (i = 0; i < graph.max + 1; i++)
+	for (i = 0; i < graph->max + 1; i++)
 	{
-		D[i] = graph.weight[S][i];
+		D[i] = graph->weight[S][i];
 		if (D[i] < INFI)
 			temp_path[i] = S;
 	}
 	D[S] = 0;
 	final[S] = 1;
 	for (i = 0; i < MAX_VEX; i++)
-		if (visited[i] == 1)
+		if (graph->visited[i] == 1)
 			final[i] = 1;
+	for (i = 0;i < 60;i++)
+	{
+		if (target[i] == -1)
+			break;
+		if (target[i] != T)
+			final[target[i]] = 1;
+	}
 
 	//main loop
-	for (i = 0;i < graph.max + 1;i++)
+	for (i = 0;i < graph->max + 1;i++)
 	{
 		min = INFI;
-		for (j = 0;j <graph.max + 1;j++)
+		k = S;
+		for (j = 0;j <graph->max + 1;j++)
 		{
 			if (!final[j] && D[j] < min)
 			{
@@ -227,12 +244,14 @@ int Dijkstra(Maps graph, int *visited, int S, int T, int *path)
 			}
 		}
 		final[k] = 1;
-		for (j = 0;j <graph.max + 1;j++)
+		for (j = 0;j <graph->max + 1;j++)
 		{
-			if (!final[j] && (min + graph.weight[k][j] < D[j]))
+			if (!final[j] && (min + graph->weight[k][j] < D[j]))
 			{
-				D[j] = min + graph.weight[k][j];
+				D[j] = min + graph->weight[k][j];
 				temp_path[j] = k;
+				//if (D[j] > lenth)
+				//	return INFI;	
 			}
 		}
 
@@ -264,28 +283,29 @@ int Dijkstra(Maps graph, int *visited, int S, int T, int *path)
 	return D[T];
 }
 
-void DFS(Node **head, Maps graph, int pre_weight, int start, int *target, int *visited, int *result_path, int *result_cost)
+void DFS(Node **head, Maps *graph, int pre_weight, int start, int *target, int *result_path, int *result_cost)
 {
 	Node *ptr;
-	int i, flag = 1;
-	int temp;
+	int i, j, flag = 1;
+	int temp, pre_vex, cnt;
+	int path_start, path_end;
+	int Dij_flag;
 
 	static int count = 0;
 	static int cost = 0;
-	static int path_count = 0;
+	// static int path_count = 0;
 	static int path_stack[5000] = {0};
-	static int path[MAX_VEX];
-	static Dij_Path DPath[60][60];
+	static int path[MAX_VEX];	
 
 	ptr = head[start];
-	visited[ptr->point] = 1;
+	graph->visited[ptr->point] = 1;
 	if (ptr->point == target[1])
 	{
 		i = 2;
 		flag = 1;
 		while (target[i] != -1)
 		{
-			if (visited[target[i]] != 1)
+			if (graph->visited[target[i]] != 1)
 			{
 				flag = 0;
 				break;
@@ -294,16 +314,25 @@ void DFS(Node **head, Maps graph, int pre_weight, int start, int *target, int *v
 		}
 		if (flag && (cost < *result_cost))
 		{
-			//stand by
-			// for (i = 0;i < count;i++)
-			// 	result_path[i] = path_stack[i];
-			// result_path[i] = -1;
-			// *result_cost = cost;
-			// path_count++;
-			// //for (i = 0; i < 45; i++)
-			// //	if (visited[i] == 1)
-			// //		printf("%d ", i);
-			// //printf("\n");
+			pre_vex = target[0];
+			cnt = 0;
+			memset(result_path, -1, sizeof(int) * INFI);
+			for (i = 0;i < count;i++)
+			{
+				j = 1;
+				while (DPath[pre_vex][path_stack[i]].path[j] != -1)
+				{
+					//path_start = DPath[pre_vex][path_stack[i]].path[j - 1];
+					//path_end = DPath[pre_vex][path_stack[i]].path[j];
+
+					result_path[cnt++] = graph->route[DPath[pre_vex][path_stack[i]].path[j - 1]][DPath[pre_vex][path_stack[i]].path[j]];
+					j++;
+				}
+				
+				pre_vex = path_stack[i];
+			}
+			//result_path[i] = -1;
+			*result_cost = cost;
 		}
 
 	}
@@ -311,32 +340,77 @@ void DFS(Node **head, Maps graph, int pre_weight, int start, int *target, int *v
 		while (ptr->next != NULL)
 		{
 			ptr = ptr->next;
-			if (visited[ptr->point] == 0)
-				if (temp = Dijkstra(graph, visited, start, ptr->point, path) < INFI)
+			if (graph->visited[ptr->point] == 0)
+			{
+				//begin_t = clock();
+				Dij_flag = 1;
+				if (DPath[start][ptr->point].flag == 1)
 				{
-					DPath[start][ptr->point].weight = temp;
 					i = 0;
-					while (path[i] != -1)
+					Dij_flag = 0;
+					while (DPath[start][ptr->point].path[i] != -1)
 					{
-						DPath[start][ptr->point].path[i] = path[i];
+						if (graph->visited[DPath[start][ptr->point].path[i]] == 1)
+						{
+							Dij_flag = 1;
+							break;
+						}
 						i++;
 					}
-					DPath[start][ptr->point].path[i] = path[i];
-					count++;
-					cost += temp;
-					DFS(head, graph, temp, ptr->point, target, visited, result_path, result_cost);
+					if (!Dij_flag)
+					{
+						path_stack[count++] = ptr->point;
+						cost += DPath[start][ptr->point].weight;
+						DFS(head, graph, DPath[start][ptr->point].weight, ptr->point, target, result_path, result_cost);
+					}
 				}
+				if (Dij_flag)
+				{
+					temp = Dijkstra(graph, target, start, ptr->point, path);
+					//finish_t = clock();
+					//printf("%f ms used\n", (double)(finish_t - begin_t));
+					if (temp < INFI)
+					{
+						DPath[start][ptr->point].weight = temp;
+						DPath[start][ptr->point].flag = 1;
+						i = 0;
+						while (path[i] != -1)
+						{
+							DPath[start][ptr->point].path[i] = path[i];
+							graph->visited[path[i]] = 1;
+							i++;
+						}
+						DPath[start][ptr->point].path[i] = -1;
+						path_stack[count++] = ptr->point;
+						cost += temp;
+						DFS(head, graph, temp, ptr->point, target, result_path, result_cost);
+					}
+				}				
+			}
 		}
 	count--;
 	cost -= pre_weight;
-	visited[start] = 0;
+	graph->visited[start] = 0;
+	i = 0;
+	if (count == 0)
+		while (DPath[target[0]][start].path[i] != -1)
+		{
+			graph->visited[DPath[target[0]][start].path[i]] = 0;
+			i++;
+		}
+	else if (count > 0)	
+		while (DPath[path_stack[count - 1]][start].path[i] != -1)
+		{
+			graph->visited[DPath[path_stack[count - 1]][start].path[i]] = 0;
+			i++;
+		}
 }
 
 void search_route(char *topo[5000], int edge_num, char *demand)
 {
 	Node *head[MAX_VEX];
 	int target[60], visited[MAX_VEX];
-	int path[100] = {0};
+	int path[INFI] = {0};
 	int cost = INFI;
 	Maps graph;
 	int test_weight;
@@ -347,11 +421,11 @@ void search_route(char *topo[5000], int edge_num, char *demand)
 	initfunc(head, target, topo, edge_num, &graph);
 	int nodes = demand2num(demand, target);
 	creat_chain(head, target, nodes);
-	print_chain(head, nodes);
-	//DFS(head, graph, 0, target[0], target, visited, path, &cost);
-	test_weight = Dijkstra(graph, visited, 2, 8, test_path);
+	//print_chain(head, nodes);
+	DFS(head, &graph, 0, target[0], target, path, &cost);
+	//test_weight = Dijkstra(graph, visited, 2, 8, test_path);
 
-	if (cost == 100000)
+	if (cost == INFI)
 		printf("NA\n");
 	else
 	{
@@ -377,17 +451,17 @@ int main()
 	char *topo[5000];
 	char *demand;
 	int demand_num;
-	clock_t start, finish;	
+		
 
-	start = clock();
+	begin_t = clock();
 	edge_num = read_file(topo, 5000, "topo.csv");
 	demand_num = read_file(&demand, 1, "demand.csv");
 	//for (i = 0;i < edge_num;i++)
 	//	printf("%s", topo[i]);	
 	search_route(topo, edge_num, demand);
-	finish = clock();
+	finish_t = clock();
 
-	printf("%f ms used", (double)(finish - start));
+	printf("%f ms used", (double)(finish_t - begin_t));
 	getchar();
 
 	return 0;
